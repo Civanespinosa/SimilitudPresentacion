@@ -1,0 +1,7 @@
+"0","plot(mdsE, display = ""sites"", 
+"
+"2","There were 18 warnings (use warnings() to see them)"
+"2","
+"
+"0","     type = ""text"",main=""a)Euclidiana"", "
+"0","     cex.axis= 1, cex.main=1, cex.lab=1, cex = 2)"
