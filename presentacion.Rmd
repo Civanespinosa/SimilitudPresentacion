@@ -454,13 +454,15 @@ plot(mdsB, display = "sites", type = "text",
 
 # Transformación y Estandarización de datos
 
-Cuando trabajamos con datos multivariantes cabe la posibilidad de que los datos dentro de esta matriz tengan diferencias de magnitud importantes. Como vimos antes, el cálculo de distancia entre los sitios puede verse fuertemente afectado por la magnitud de sus diferencias.
+Cuando trabajamos con datos multivariantes los datos podrían tener diferencias de magnitud importantes. Como vimos antes, el cálculo de distancia entre los sitios puede verse fuertemente afectado por la magnitud de sus diferencias.
 
-En el ejemplo que mostramos en el inicio, las similitudes entre comunidades basadas en las dos primeras especies, las diferencias dependen de la escala de medición (los valores de los ejes), y sobre cómo medimos la distancia a través del espacio multivariado [@Stevens2009].
+--
 
-De esta forma, las diferencias entre sitios son dependientes de la abundancia de cada especie. En el caso de *G. spinosa* su eje varía entre 5 y 21, mientras que para *T. billbergii* varía entre 1 y 3 (Figura \@ref(fig:NMDS2)a). Veamos ahora que sucede con las similitud si incremento la abundancia de *T. billbergii* (Figura \@ref(fig:NMDS2)b).
+Las diferencias entre sitios son dependientes de la abundancia de cada especie. En el caso de *G. spinosa* su eje varía entre 5 y 21, mientras que para *T. billbergii* varía entre 1 y 3. 
 
-```{r NMDS2, fig.cap = "Distancias de cuatro localidades hipotéticas",  fig.height=3}
+Veamos ahora que sucede con las similitud si incremento la abundancia de *T. billbergii*.
+
+```{r NMDS2, echo=FALSE, fig.cap = "Distancias de cuatro localidades hipotéticas",  fig.height=3}
 par(mar=c(4,4,1,1), mgp=c(1,0.3,0), mfcol=c(1,2), tcl= -0.2)
 dens1 <- dens
 dens1$T.bil <- dens1$T.bil*100
@@ -471,21 +473,35 @@ plot(dens1[,1:2], type = "n", cex.axis=0.8, ylim=c(0,300), main="b.")
 text(dens1[,1:2], row.names(dens1), col ="blue")
 ```
 
-Como vemos en la figura \@ref(fig:NMDS2) las distancias entre cada uno de los sitios cambio cuando incremento la abundancia de _T. bilbergi_, aunque este incremento fue proporcional.  Una forma de corregir esta distorsión es calcular la densidad relativa de cada especie, de esta forma cada especie variará entre 0 y 1 [@Stevens2009]. Cuando nos referimos a densidad relativa hablamos de la densidad de una especie con referencia a algo, en este caso con relación a la abundancia de individuos de la misma especie en otros sitios.
+---
+
+#Abundancia relativa
+
+Una forma de corregir esta distorsión es calcular la densidad relativa de cada especie, de esta forma cada especie variará entre 0 y 1 [@Stevens2009].
 
 Para calcular la densidad relativa dividimos la abundancia de cada especie para la suma total de los individuos de las especies en esa muestra.
+
+--
 
 ```{r}
 dens[,1]/sum(dens[,1])
 dens1[,1]/sum(dens1[,1])
 ```
 
+--
+
+Ahora podemos ver cómo *T. billbergii* varía en su abundancia en los cuatro sitios. Los sitios A y B tienen el 14% de individuos mientras que el D tiene el 42% de los individuos de esta especie. 
+
+--
+
+Interesantemente, no hay diferencias en las proporciones entre las dos medidas que tenemos. ¿Qué pasó con las distancias?
+
+
 ---
 
-Ahora podemos ver cómo *T. billbergii* varía en su abundancia en los cuatro sitios. Los sitios A y B tienen el 14% de individuos mientras que el D tiene el 42% de los individuos de esta especie. Interesantemente, no hay diferencias en las proporciones entre las dos medidas que tenemos. ¿Qué pasó con las distancias?
+# Distancias con datos de densidad relativa
 
-
-```{r NMDS3, fig.cap = "Distancias de cuatro localidades hipotéticas",  fig.height=3.5, fig.width=5, echo=FALSE}
+```{r NMDS3, echo = FALSE, fig.cap = "Distancias de cuatro localidades hipotéticas",  fig.height=3.5, fig.width=5, echo=FALSE}
 
 dens3 <- dens[,1:2]
 
@@ -513,17 +529,30 @@ text(dens4, row.names(dens4), col ="blue")
 
 ```
 
-En la figura \@ref(fig:NMDS3) podemos apreciar que no hay diferencias entre las dos comunidades cuando estoy usando la densidad relativa. Pero ¿Qué implicaciones biológicas tiene el usar las densidades relativas para calcular la distancia entre sitios?
+Cuando estoy usando la densidad relativa no hay diferencias entre las dos comunidades. 
 
-Cuando usamos las densidades relativas estamos dando el mismo peso a todas las especies. En un ecosistema con una especie dominante y varias subordinadas, al usar la densidad relativa estoy eliminando esa dominancia. Es importante tener claro este punto, ya que las interpretaciones que puedo hacer con los datos de abundancia y abundancia relativa son distintos.
+--
+
+¿Qué implicaciones biológicas tiene el usar las densidades relativas para calcular la distancia entre sitios?
+
+--
+
+Cuando usamos las densidades relativas estamos dando el mismo peso a todas las especies. 
 
 ---
 
 ## Transformación de datos
 
-Esta claro que la magnitud de las diferencias entre las variables tiene un impacto sobre el cálculo de la distancia. Ahora, nos interesa poder manejar el efecto de esas diferencias, para lo cual desarrollamos una transformación.
+Esta claro que la magnitud de las diferencias entre las variables tiene un impacto sobre el cálculo de la distancia. 
 
-La transformación de datos implica una modificación de los datos brutos a través de una ecuación algebraica. La transformación de datos implica una modificación independientemente para cada dato, no existe influencia del resto de datos. 
+La transformación de datos implica una modificación de los datos brutos a través de una ecuación algebraica. 
+
+--
+
+__La transformación de datos implica una modificación independientemente para cada dato, no existe influencia del resto de datos. __
+
+
+--
 
 ```{r, echo=FALSE }
 library(readxl)
@@ -533,15 +562,28 @@ kable(dta, caption = "Comunidad de macroinvertebrados acuáticos")
 
 ```
 
-En la tabla anterior podemos ver que la comunidad está compuesta por un par de especies dominantes y varias especies raras.
+---
 
-Al transformar los datos evitamos que las especies dominantes definan el cálculo de la distancia.
+#Transformación de datos
 
 Existen varias posibilidades para transformar los datos, por lo que definir que función utilizar es importante.  Cada tipo de transformación produce resultados distintos por lo que debemos utilizarlas con precaución.
 
-La transformación más sencilla o menos intensa es la raíz cuadrada, mientras que el logaritmo es la transformación más intensa, podríamos utilizar la raíz cuarta como una función intermedia. La raíz cuadrada la utilizaríamos cuando tenemos diferencias con variaciones de una magnitud de diferencia (entre decenas y centenas), mientras que la transformación logarítmica la haríamos con  comunidades donde hay más de una magnitud de diferencia (entre decenas y miles).
+--
 
-Aunque hay muchos autores que aconsejan realizar transformaciones hay que ser conscientes de lo que estamos haciendo, transformaciones muy fuertes en una matriz con pocas diferencias pueden hacer que, por ejemplo, las especies raras tengan igual peso que las dominantes, ¿esto es lo que queremos?
+Exiten diferentes niveles de transformación: 
+
+--
+
+1. La raíz cuadrada; diferencias con variaciones de una magnitud de diferencia (entre decenas y centenas)
+
+--
+
+2. La raíz cuarta 
+
+3. Logaritmo: comunidades donde hay más de una magnitud de diferencia (entre decenas y miles)
+
+
+Transformaciones muy fuertes en una matriz con pocas diferencias pueden hacer que, las especies raras tengan igual peso que las dominantes, ¿esto es lo que queremos?
 
 ---
 
@@ -551,7 +593,7 @@ __Recuerde: las diferentes transformaciones tienen interpretaciones biológicas 
 
 Veamos un ejemplo:
 
-```{r}
+```{r echo = FALSE}
 set.seed(4)
 aves<- data.frame(sp1= sample(1:90, 10), sp2= sample(100:250, 10))
 
@@ -563,12 +605,19 @@ colnames(aveT) <- paste(rep(c("sp1", "sp2"), 3), c("","","sqrt", "sqrt", "log", 
 
 kable(aveT, caption = "Efecto de la transformación. Pequeñas diferencias")
 
+```
+
+---
+
+Ahora veamos que pasa con mayores diferencias
+
+```{r echo = FALSE}
 insT <- round(cbind(insectos, sqrt(insectos),log(insectos)),2) 
 colnames(insT) <- paste(rep(c("sp1", "sp2"), 3), c("","","sqrt", "sqrt", "log", "log"), sep=".")
 
 kable(insT, caption = "Efecto de la transformación, Grandes diferencias")
-
 ```
+
 
 ---
 
@@ -588,9 +637,5 @@ round(mean(avesE),1);sd(avesE)
 ```
 Como vemos las variables estandarizadas tienen como propiedad que la desviación estándar es 1 y la media es 0.
 
----
-```{r}
-
-knitr::include_url("https://www.economist.com/node/21642053?fsrc=scn/tw/te/dc/brightlightsbigcities")
 
 ```
